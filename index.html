@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekend Planner 🎉</title>
+<style>
+  /* ============================================
+     RESET & BASE
+     ============================================ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+    min-height: 100vh;
+  }
+
+  /* ============================================
+     VARIABLES
+     ============================================ */
+  :root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --primary-light: #e0e1ff;
+    --green: #22c55e;
+    --green-light: #dcfce7;
+    --red: #ef4444;
+    --red-light: #fee2e2;
+    --yellow: #f59e0b;
+    --yellow-light: #fef3c7;
+    --orange: #f97316;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+  }
+
+  /* ============================================
+     LAYOUT
+     ============================================ */
+  .app {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 16px;
+    padding-bottom: 100px;
+  }
+
+  /* ============================================
+     HEADER
+     ============================================ */
+  .hero {
+    background: linear-gradient(135deg, var(--primary), #8b5cf6, #ec4899);
+    border-radius: var(--radius);
+    padding: 32px 24px;
+    color: white;
+    text-align: center;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -30%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    position: relative;
+  }
+
+  .hero p {
+    opacity: 0.85;
+    font-size: 15px;
+    position: relative;
+  }
+
+  .hero .event-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 16px;
+    font-size: 14px;
+    position: relative;
+  }
+
+  .hero .event-info span {
+    background: rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+  }
+
+  /* ============================================
+     SETUP FORM
+     ============================================ */
+  .setup-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+
+  .setup-card h2 {
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+
+  .setup-card .subtitle {
+    color: var(--gray-500);
+    margin-bottom: 24px;
+  }
+
+  /* ============================================
+     FORMS
+     ============================================ */
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 6px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-family: inherit;
+    transition: all 0.2s;
+    background: white;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-light);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* ============================================
+     BUTTONS
+     ============================================ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn:active {
+    transform: translateY(0);
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+  }
+
+  .btn-primary:hover {
+    background: var(--primary-dark);
+  }
+
+  .btn-secondary {
+    background: var(--gray-100);
+    color: var(--gray-700);
+  }
+
+  .btn-secondary:hover {
+    background: var(--gray-200);
+  }
+
+  .btn-danger {
+    background: var(--red-light);
+    color: var(--red);
+  }
+
+  .btn-success {
+    background: var(--green-light);
+    color: #16a34a;
+  }
+
+  .btn-full {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+  }
+
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 16px;
+  }
+
+  /* ============================================
+     TABS
+     ============================================ */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    background: white;
+    padding: 6px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    border: none;
+    background: none;
+    color: var(--gray-500);
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+
+  .tab:hover {
+    background: var(--gray-100);
+    color: var(--gray-700);
+  }
+
+  .tab.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 2px 8px rgba(99,102,241,0.3);
+  }
+
+  /* ============================================
+     CARDS
+     ============================================ */
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 16px 20px;
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  .card-header .count {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray-400);
+  }
+
+  .card-body {
+    padding: 16px 20px;
+  }
+
+  /* ============================================
+     PARTICIPANTS
+     ============================================ */
+  .participant-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  .participant-item:last-child {
+    border-bottom: none;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .avatar-sm {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .participant-name {
+    flex: 1;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .status-buttons {
+    display: flex;
+    gap: 4px;
+  }
+
+  .status-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid var(--gray-200);
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .status-btn.confirmed { background: var(--green-light); border-color: var(--green); }
+  .status-btn.pending { background: var(--yellow-light); border-color: var(--yellow); }
+  .status-btn.declined { background: var(--red-light); border-color: var(--red); }
+
+  /* ============================================
+     EXPENSES
+     ============================================ */
+  .expense-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+  }
+
+  .expense-emoji {
+    font-size: 28px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: var(--radius-sm);
+  }
+
+  .expense-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .expense-desc {
+    font-weight: 600;
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .expense-payer {
+    font-size: 13px;
+    color: var(--gray-500);
+  }
+
+  .expense-amount {
+    font-weight: 800;
+    font-size: 16px;
+    white-space: nowrap;
+  }
+
+  /* ============================================
+     BALANCE
+     ============================================ */
+  .balance-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+  }
+
+  .balance-amount {
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .balance-positive { color: var(--green); }
+  .balance-negative { color: var(--red); }
+  .balance-zero { color: var(--gray-400); }
+
+  .settlement-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: #fffbeb;
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+
+  .settlement-arrow {
+    color: var(--orange);
+    font-weight: 700;
+  }
+
+  .settlement-amount {
+    margin-left: auto;
+    font-weight: 800;
+    color: #b45309;
+  }
+
+  /* ============================================
+     POLLS
+     ============================================ */
+  .poll-card {
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .poll-question {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .poll-option {
+    position: relative;
+    padding: 10px 14px;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    background: white;
+    transition: all 0.2s;
+  }
+
+  .poll-option:hover {
+    border-color: var(--gray-300);
+  }
+
+  .poll-option.voted {
+    border-color: var(--primary);
+    background: var(--primary-light);
+  }
+
+  .poll-option-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background: var(--primary-light);
+    opacity: 0.4;
+    transition: width 0.5s ease;
+  }
+
+  .poll-option-content {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .poll-option-text {
+    font-weight: 500;
+  }
+
+  .poll-option-count {
+    font-size: 13px;
+    color: var(--gray-500);
+    font-weight: 600;
+  }
+
+  /* ============================================
+     MESSAGES
+     ============================================ */
+  .chat-container {
+    height: 350px;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+  }
+
+  .chat-container::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .chat-container::-webkit-scrollbar-thumb {
+    background: var(--gray-300);
+    border-radius: 3px;
+  }
+
+  .message {
+    display: flex;
+    gap: 8px;
+    max-width: 80%;
+  }
+
+  .message.mine {
+    flex-direction: row-reverse;
+    align-self: flex-end;
+  }
+
+  .message-bubble {
+    padding: 8px 14px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.4;
+    max-width: 100%;
+    word-wrap: break-word;
+  }
+
+  .message:not(.mine) .message-bubble {
+    background: white;
+    border-bottom-left-radius: 4px;
+  }
+
+  .message.mine .message-bubble {
+    background: var(--primary);
+    color: white;
+    border-bottom-right-radius: 4px;
+  }
+
+  .message-meta {
+    font-size: 11px;
+    color: var(--gray-400);
+    margin-top: 2px;
+  }
+
+  .message.mine .message-meta {
+    text-align: right;
+  }
+
+  .chat-input {
+    display: flex;
+    gap: 8px;
+  }
+
+  .chat-input input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: inherit;
+  }
+
+  .chat-input input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 32px;
+    color: var(--gray-400);
+  }
+
+  .empty-state .emoji {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+
+  /* ============================================
+     TODOS
+     ============================================ */
+  .todo-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  .todo-item:last-child {
+    border-bottom: none;
+  }
+
+  .todo-check {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--gray-300);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    background: white;
+    font-size: 13px;
+  }
+
+  .todo-check.done {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+
+  .todo-text {
+    flex: 1;
+    font-size: 15px;
+  }
+
+  .todo-text.done {
+    text-decoration: line-through;
+    color: var(--gray-400);
+  }
+
+  .todo-assignee {
+    font-size: 12px;
+    color: var(--gray-400);
+    background: var(--gray-100);
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  /* ============================================
+     ADD FORM (dashed border)
+     ============================================ */
+  .add-btn {
+    width: 100%;
+    padding: 14px;
+    border: 2px dashed var(--gray-300);
+    border-radius: var(--radius-sm);
+    background: none;
+    color: var(--gray-400);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+
+  .add-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+  }
+
+  .inline-form {
+    display: none;
+    gap: 8px;
+    padding: 12px;
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+    margin-top: 8px;
+  }
+
+  .inline-form.show {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .inline-form input,
+  .inline-form select {
+    padding: 8px 12px;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: inherit;
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .inline-form input:focus,
+  .inline-form select:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  /* ============================================
+     TOAST
+     ============================================ */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background: var(--gray-800);
+    color: white;
+    padding: 12px 24px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 9999;
+    transition: transform 0.3s ease;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ============================================
+     MODAL
+     ============================================ */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.show {
+    display: flex;
+  }
+
+  .modal {
+    background: white;
+    border-radius: var(--radius);
+    padding: 32px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .modal h2 {
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+
+  .modal .subtitle {
+    color: var(--gray-500);
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  /* ============================================
+     RESPONSIVE
+     ============================================ */
+  @media (max-width: 600px) {
+    .app { padding: 10px; }
+    .hero { padding: 24px 16px; }
+    .hero h1 { font-size: 22px; }
+    .card-header { padding: 14px 16px; font-size: 16px; }
+    .card-body { padding: 14px 16px; }
+    .form-row { grid-template-columns: 1fr; }
+    .tabs { gap: 4px; padding: 4px; }
+    .tab { padding: 8px 12px; font-size: 13px; }
+  }
+
+  /* ============================================
+     DELETE BUTTON
+     ============================================ */
+  .delete-btn {
+    opacity: 0;
+    transition: opacity 0.2s;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+    color: var(--gray-300);
+  }
+
+  .delete-btn:hover {
+    color: var(--red);
+  }
+
+  *:hover > .delete-btn,
+  .delete-btn:focus {
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<!-- APP -->
+<div class="app" id="app"></div>
+
+<script>
+// ============================================
+// DATA STORE (localStorage)
+// ============================================
+const STORAGE_KEY = 'weekend_planner_data';
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return null;
+}
+
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function getDefaultData() {
+  return {
+    event: null, // { title, description, location, dateStart, dateEnd, createdBy }
+    participants: [],   // [{ id, name, status }]
+    expenses: [],       // [{ id, paidBy, description, amount, category }]
+    polls: [],          // [{ id, question, options: [{ id, text, votes: [participantId] }] }]
+    messages: [],       // [{ id, participantId, content, timestamp }]
+    todos: [],          // [{ id, title, assignedTo, done }]
+    currentUser: null   // participantId
+  };
+}
+
+let data = loadData() || getDefaultData();
+let activeTab = 'overview';
+
+// ============================================
+// UTILS
+// ============================================
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+}
+
+function getAvatarColor(name) {
+  const colors = ['#6366f1','#ec4899','#f97316','#22c55e','#3b82f6','#8b5cf6','#ef4444','#14b8a6','#f59e0b','#06b6d4'];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return colors[Math.abs(hash) % colors.length];
+}
+
+function getInitials(name) {
+  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+}
+
+function formatCurrency(amount) {
+  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
+}
+
+function formatTime(ts) {
+  const d = new Date(ts);
+  const now = new Date();
+  const diff = now - d;
+  if (diff < 60000) return "à l'instant";
+  if (diff < 3600000) return `il y a ${Math.floor(diff/60000)}min`;
+  if (diff < 86400000) return `il y a ${Math.floor(diff/3600000)}h`;
+  return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+
+const catEmoji = { food:'🍕', drinks:'🍻', accommodation:'🏠', transport:'🚗', activities:'🎯', other:'📦' };
+const catLabel = { food:'Nourriture', drinks:'Boissons', accommodation:'Hébergement', transport:'Transport', activities:'Activités', other:'Autre' };
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function getParticipantName(id) {
+  const p = data.participants.find(p => p.id === id);
+  return p ? p.name : '?';
+}
+
+// ============================================
+// RENDER ENGINE
+// ============================================
+function render() {
+  const app = document.getElementById('app');
+
+  if (!data.event) {
+    app.innerHTML = renderSetup();
+  } else if (!data.currentUser) {
+    app.innerHTML = renderJoin();
+  } else {
+    app.innerHTML = renderEvent();
+  }
+
+  saveData(data);
+}
+
+// ============================================
+// SETUP PAGE
+// ============================================
+function renderSetup() {
+  return `
+    <div class="setup-card" style="margin-top:40px">
+      <div style="text-align:center;margin-bottom:24px">
+        <div style="font-size:56px;margin-bottom:8px">🎉</div>
+        <h2>Organise ton weekend</h2>
+        <p class="subtitle">Entre potes, simple et efficace</p>
+      </div>
+
+      <div class="form-group">
+        <label>✨ Nom du weekend *</label>
+        <input type="text" id="setup-title" placeholder="Weekend ski, Anniv de Tom..." maxlength="100">
+      </div>
+
+      <div class="form-group">
+        <label>👤 Ton prénom *</label>
+        <input type="text" id="setup-name" placeholder="Comment tu t'appelles ?" maxlength="50">
+      </div>
+
+      <div class="form-group">
+        <label>📝 Description</label>
+        <textarea id="setup-desc" placeholder="Infos pratiques, lien Airbnb..." maxlength="500"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>📍 Lieu</label>
+        <input type="text" id="setup-location" placeholder="Chamonix, Hossegor, chez Manu...">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>📅 Début *</label>
+          <input type="date" id="setup-start">
+        </div>
+        <div class="form-group">
+          <label>📅 Fin *</label>
+          <input type="date" id="setup-end">
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-full" onclick="createEvent()" style="margin-top:8px">
+        🚀 Créer le weekend !
+      </button>
+    </div>
+  `;
+}
+
+function createEvent() {
+  const title = document.getElementById('setup-title').value.trim();
+  const name = document.getElementById('setup-name').value.trim();
+  const desc = document.getElementById('setup-desc').value.trim();
+  const location = document.getElementById('setup-location').value.trim();
+  const dateStart = document.getElementById('setup-start').value;
+  const dateEnd = document.getElementById('setup-end').value;
+
+  if (!title || !name || !dateStart || !dateEnd) {
+    toast('⚠️ Remplis les champs obligatoires !');
+    return;
+  }
+
+  const participantId = uid();
+
+  data.event = { title, description: desc, location, dateStart, dateEnd, createdBy: name };
+  data.participants.push({ id: participantId, name, status: 'confirmed' });
+  data.currentUser = participantId;
+  data.messages.push({
+    id: uid(), participantId: null,
+    content: `🎉 ${name} a créé le weekend "${title}" !`,
+    timestamp: Date.now(), system: true
+  });
+
+  toast('Weekend créé ! 🎉');
+  render();
+}
+
+// ============================================
+// JOIN PAGE
+// ============================================
+function renderJoin() {
+  return `
+    <div class="setup-card" style="margin-top:60px">
+      <div style="text-align:center;margin-bottom:24px">
+        <div style="font-size:56px;margin-bottom:8px">👋</div>
+        <h2>Rejoindre le weekend</h2>
+        <p class="subtitle">${data.event.title}</p>
+      </div>
+
+      <div class="form-group">
+        <label>Ton prénom</label>
+        <input type="text" id="join-name" placeholder="Comment tu t'appelles ?" maxlength="50">
+      </div>
+
+      <button class="btn btn-primary btn-full" onclick="joinEvent()">Rejoindre 🎉</button>
+    </div>
+  `;
+}
+
+function joinEvent() {
+  const name = document.getElementById('join-name').value.trim();
+  if (!name) { toast('⚠️ Entre ton prénom !'); return; }
+
+  const existing = data.participants.find(p => p.name.toLowerCase() === name.toLowerCase());
+  if (existing) {
+    data.currentUser = existing.id;
+    toast('Content de te revoir, ' + existing.name + ' ! 👋');
+  } else {
+    const id = uid();
+    data.participants.push({ id, name, status: 'confirmed' });
+    data.currentUser = id;
+    data.messages.push({
+      id: uid(), participantId: null,
+      content: `👋 ${name} a rejoint le weekend !`,
+      timestamp: Date.now(), system: true
+    });
+    toast('Bienvenue ' + name + ' ! 🎉');
+  }
+  render();
+}
+
+// ============================================
+// EVENT PAGE
+// ============================================
+function renderEvent() {
+  const e = data.event;
+  const confirmed = data.participants.filter(p => p.status === 'confirmed').length;
+  const currentName = getParticipantName(data.currentUser);
+
+  const tabsHtml = [
+    { id: 'overview', label: '📋 Général' },
+    { id: 'expenses', label: '💰 Comptes' },
+    { id: 'polls', label: '📊 Sondages' },
+    { id: 'chat', label: '💬 Chat' },
+    { id: 'todos', label: '✅ Tâches' },
+  ].map(t => `<button class="tab ${t.id === activeTab ? 'active' : ''}" onclick="switchTab('${t.id}')">${t.label}</button>`).join('');
+
+  let content = '';
+  if (activeTab === 'overview') content = renderParticipants();
+  if (activeTab === 'expenses') content = renderExpenses() + renderBalance();
+  if (activeTab === 'polls') content = renderPolls();
+  if (activeTab === 'chat') content = renderChat();
+  if (activeTab === 'todos') content = renderTodos();
+
+  return `
+    <div class="hero">
+      <h1>${e.title}</h1>
+      ${e.description ? `<p>${e.description}</p>` : ''}
+      <div class="event-info">
+        ${e.location ? `<span>📍 ${e.location}</span>` : ''}
+        <span>📅 ${new Date(e.dateStart).toLocaleDateString('fr-FR', {day:'numeric',month:'short'})} → ${new Date(e.dateEnd).toLocaleDateString('fr-FR', {day:'numeric',month:'short'})}</span>
+        <span>👥 ${confirmed} confirmé${confirmed > 1 ? 's' : ''}</span>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:0 4px">
+      <span style="font-size:13px;color:var(--gray-500)">Connecté : <strong style="color:var(--primary)">${currentName}</strong></span>
+      <button class="btn btn-sm btn-secondary" onclick="switchUser()">Changer</button>
+    </div>
+
+    <div class="tabs">${tabsHtml}</div>
+    ${content}
+  `;
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  render();
+  if (tab === 'chat') {
+    setTimeout(() => {
+      const c = document.getElementById('chat-box');
+      if (c) c.scrollTop = c.scrollHeight;
+    }, 50);
+  }
+}
+
+function switchUser() {
+  data.currentUser = null;
+  render();
+}
+
+// ============================================
+// PARTICIPANTS
+// ============================================
+function renderParticipants() {
+  const items = data.participants.map(p => {
+    const statusBtns = ['confirmed','pending','declined'].map(s => {
+      const icons = { confirmed: '✓', pending: '?', declined: '✗' };
+      return `<button class="status-btn ${p.status === s ? s : ''}" onclick="setStatus('${p.id}','${s}')" title="${s}">${icons[s]}</button>`;
+    }).join('');
+
+    return `
+      <div class="participant-item">
+        <div class="avatar" style="background:${getAvatarColor(p.name)}">${getInitials(p.name)}</div>
+        <span class="participant-name">${p.name}</span>
+        <div class="status-buttons">${statusBtns}</div>
+        <button class="delete-btn" onclick="removeParticipant('${p.id}')" title="Retirer">🗑️</button>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        👥 Participants
+        <span class="count">${data.participants.filter(p=>p.status==='confirmed').length} confirmés</span>
+      </div>
+      <div class="card-body">
+        ${items}
+        <button class="add-btn" onclick="toggleForm('add-participant-form')" style="margin-top:12px">+ Ajouter un participant</button>
+        <div class="inline-form" id="add-participant-form">
+          <input type="text" id="new-participant-name" placeholder="Prénom" maxlength="50" onkeydown="if(event.key==='Enter')addParticipant()">
+          <button class="btn btn-primary btn-sm" onclick="addParticipant()">Ajouter</button>
+          <button class="btn btn-secondary btn-sm" onclick="toggleForm('add-participant-form')">Annuler</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function setStatus(id, status) {
+  const p = data.participants.find(p => p.id === id);
+  if (p) { p.status = status; render(); }
+}
+
+function addParticipant() {
+  const input = document.getElementById('new-participant-name');
+  const name = input.value.trim();
+  if (!name) return;
+  if (data.participants.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+    toast('⚠️ Ce nom existe déjà !'); return;
+  }
+  data.participants.push({ id: uid(), name, status: 'pending' });
+  toast(name + ' ajouté ! 🎉');
+  render();
+}
+
+function removeParticipant(id) {
+  if (!confirm('Retirer ce participant ?')) return;
+  data.participants = data.participants.filter(p => p.id !== id);
+  data.expenses = data.expenses.filter(e => e.paidBy !== id);
+  render();
+}
+
+// ============================================
+// EXPENSES
+// ============================================
+function renderExpenses() {
+  const total = data.expenses.reduce((s, e) => s + e.amount, 0);
+  const confirmed = data.participants.filter(p => p.status !== 'declined');
+
+  const items = data.expenses.length === 0
+    ? '<div class="empty-state"><div class="emoji">💸</div><p>Aucune dépense</p></div>'
+    : data.expenses.map(e => `
+        <div class="expense-item">
+          <div class="expense-emoji">${catEmoji[e.category] || '📦'}</div>
+          <div class="expense-info">
+            <div class="expense-desc">${e.description}</div>
+            <div class="expense-payer">Payé par ${getParticipantName(e.paidBy)}</div>
+          </div>
+          <div class="expense-amount">${formatCurrency(e.amount)}</div>
+          <button class="delete-btn" onclick="removeExpense('${e.id}')">🗑️</button>
+        </div>
+      `).join('');
+
+  const participantOptions = confirmed.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+  const categoryOptions = Object.keys(catEmoji).map(c => `<option value="${c}">${catEmoji[c]} ${catLabel[c]}</option>`).join('');
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        💰 Dépenses
+        <span class="count">${formatCurrency(total)}</span>
+      </div>
+      <div class="card-body">
+        ${items}
+        <button class="add-btn" onclick="toggleForm('add-expense-form')" style="margin-top:12px">+ Ajouter une dépense</button>
+        <div class="inline-form" id="add-expense-form">
+          <select id="expense-payer" style="min-width:120px"><option value="">Payé par...</option>${participantOptions}</select>
+          <input type="text" id="expense-desc" placeholder="Description" maxlength="100">
+          <input type="number" id="expense-amount" placeholder="Montant" step="0.01" min="0" style="max-width:100px">
+          <select id="expense-cat">${categoryOptions}</select>
+          <button class="btn btn-primary btn-sm" onclick="addExpense()">Ajouter</button>
+          <button class="btn btn-secondary btn-sm" onclick="toggleForm('add-expense-form')">Annuler</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function addExpense() {
+  const paidBy = document.getElementById('expense-payer').value;
+  const desc = document.getElementById('expense-desc').value.trim();
+  const amount = parseFloat(document.getElementById('expense-amount').value);
+  const category = document.getElementById('expense-cat').value;
+
+  if (!paidBy || !desc || !amount || amount <= 0) { toast('⚠️ Remplis tous les champs !'); return; }
+
+  data.expenses.push({ id: uid(), paidBy, description: desc, amount, category });
+  toast('Dépense ajoutée ! 💰');
+  render();
+}
+
+function removeExpense(id) {
+  if (!confirm('Supprimer cette dépense ?')) return;
+  data.expenses = data.expenses.filter(e => e.id !== id);
+  render();
+}
+
+// ============================================
+// BALANCE
+// ============================================
+function renderBalance() {
+  if (!data.expenses.length) return '';
+
+  const confirmed = data.participants.filter(p => p.status !== 'declined');
+  if (!confirmed.length) return '';
+
+  // Calcul des balances
+  const balances = {};
+  confirmed.forEach(p => { balances[p.id] = { participant: p, paid: 0, owes: 0 }; });
+
+  data.expenses.forEach(e => {
+    if (balances[e.paidBy]) balances[e.paidBy].paid += e.amount;
+    const share = e.amount / confirmed.length;
+    confirmed.forEach(p => { balances[p.id].owes += share; });
+  });
+
+  const balanceList = Object.values(balances).map(b => ({ ...b, balance: b.paid - b.owes }));
+
+  // Calcul des remboursements
+  const debtors = balanceList.filter(b => b.balance < -0.01).map(b => ({...b, rem: Math.abs(b.balance)})).sort((a,b) => b.rem - a.rem);
+  const creditors = balanceList.filter(b => b.balance > 0.01).map(b => ({...b, rem: b.balance})).sort((a,b) => b.rem - a.rem);
+
+  const settlements = [];
+  let i=0, j=0;
+  while(i < debtors.length && j < creditors.length) {
+    const amt = Math.min(debtors[i].rem, creditors[j].rem);
+    if(amt > 0.01) settlements.push({ from: debtors[i].participant, to: creditors[j].participant, amount: Math.round(amt*100)/100 });
+    debtors[i].rem -= amt;
+    creditors[j].rem -= amt;
+    if(debtors[i].rem < 0.01) i++;
+    if(creditors[j].rem < 0.01) j++;
+  }
+
+  const balanceHtml = balanceList.map(b => {
+    let cls = 'balance-zero', prefix = '';
+    if(b.balance > 0.01) { cls = 'balance-positive'; prefix = '+'; }
+    if(b.balance < -0.01) { cls = 'balance-negative'; }
+    return `
+      <div class="balance-item">
+        <div class="avatar avatar-sm" style="background:${getAvatarColor(b.participant.name)}">${getInitials(b.participant.name)}</div>
+        <span style="flex:1;font-size:14px;font-weight:500">${b.participant.name}</span>
+        <span class="balance-amount ${cls}">${prefix}${formatCurrency(b.balance)}</span>
+      </div>`;
+  }).join('');
+
+  const settleHtml = settlements.length
+    ? settlements.map(s => `
+      <div class="settlement-item">
+        <div class="avatar avatar-sm" style="background:${getAvatarColor(s.from.name)}">${getInitials(s.from.name)}</div>
+        <strong>${s.from.name}</strong>
+        <span class="settlement-arrow">→</span>
+        <div class="avatar avatar-sm" style="background:${getAvatarColor(s.to.name)}">${getInitials(s.to.name)}</div>
+        <strong>${s.to.name}</strong>
+        <span class="settlement-amount">${formatCurrency(s.amount)}</span>
+      </div>`).join('')
+    : '<p style="text-align:center;color:var(--gray-400);padding:12px">Tout le monde est à jour ✨</p>';
+
+  return `
+    <div class="card">
+      <div class="card-header">⚖️ Équilibre des comptes</div>
+      <div class="card-body">
+        ${balanceHtml}
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-100)">
+          <div style="font-weight:700;font-size:14px;color:var(--gray-700);margin-bottom:8px">💸 Remboursements</div>
+          ${settleHtml}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================
+// POLLS
+// ============================================
+function renderPolls() {
+  const pollsHtml = data.polls.length === 0
+    ? '<div class="empty-state"><div class="emoji">📊</div><p>Aucun sondage</p></div>'
+    : data.polls.map(poll => {
+      const totalVotes = poll.options.reduce((s, o) => s + o.votes.length, 0);
+      const optionsHtml = poll.options.map(opt => {
+        const pct = totalVotes > 0 ? (opt.votes.length / totalVotes * 100) : 0;
+        const voted = opt.votes.includes(data.currentUser);
+        const votersHtml = opt.votes.slice(0,4).map(vid => {
+          const n = getParticipantName(vid);
+          return `<div class="avatar avatar-sm" style="background:${getAvatarColor(n)};margin-left:-4px;border:2px solid white" title="${n}">${getInitials(n)}</div>`;
+        }).join('');
+        return `
+          <div class="poll-option ${voted ? 'voted' : ''}" onclick="votePoll('${poll.id}','${opt.id}')">
+            <div class="poll-option-bar" style="width:${pct}%"></div>
+            <div class="poll-option-content">
+              <span class="poll-option-text">${voted ? '✓ ' : ''}${opt.text}</span>
+              <div style="display:flex;align-items:center;gap:6px">
+                <div style="display:flex">${votersHtml}</div>
+                <span class="poll-option-count">${opt.votes.length}</span>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+
+      return `
+        <div class="poll-card">
+          <div style="display:flex;justify-content:space-between;align-items:start">
+            <div class="poll-question">${poll.question}</div>
+            <button class="delete-btn" onclick="removePoll('${poll.id}')" style="opacity:1">🗑️</button>
+          </div>
+          ${optionsHtml}
+        </div>`;
+    }).join('');
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        📊 Sondages
+        <span class="count">${data.polls.length}</span>
+      </div>
+      <div class="card-body">
+        ${pollsHtml}
+        <button class="add-btn" onclick="toggleForm('add-poll-form')" style="margin-top:12px">+ Nouveau sondage</button>
+        <div class="inline-form" id="add-poll-form" style="flex-direction:column">
+          <input type="text" id="poll-question" placeholder="Ta question..." maxlength="200">
+          <div id="poll-options-container">
+            <input type="text" class="poll-option-input" placeholder="Option 1" maxlength="100" style="margin-bottom:8px">
+            <input type="text" class="poll-option-input" placeholder="Option 2" maxlength="100" style="margin-bottom:8px">
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="addPollOption()" style="align-self:start">+ Ajouter une option</button>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="btn btn-primary btn-sm" onclick="createPoll()">Créer</button>
+            <button class="btn btn-secondary btn-sm" onclick="toggleForm('add-poll-form')">Annuler</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function addPollOption() {
+  const container = document.getElementById('poll-options-container');
+  const count = container.querySelectorAll('input').length;
+  if (count >= 6) { toast('6 options max !'); return; }
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'poll-option-input';
+  input.placeholder = `Option ${count + 1}`;
+  input.maxLength = 100;
+  input.style.marginBottom = '8px';
+  container.appendChild(input);
+}
+
+function createPoll() {
+  const question = document.getElementById('poll-question').value.trim();
+  const optionInputs = document.querySelectorAll('.poll-option-input');
+  const options = [];
+  optionInputs.forEach(input => {
+    const text = input.value.trim();
+    if (text) options.push({ id: uid(), text, votes: [] });
+  });
+
+  if (!question || options.length < 2) { toast('⚠️ Question + 2 options minimum !'); return; }
+
+  data.polls.push({ id: uid(), question, options });
+  toast('Sondage créé ! 📊');
+  render();
+}
+
+function votePoll(pollId, optionId) {
+  const poll = data.polls.find(p => p.id === pollId);
+  if (!poll) return;
+
+  // Remove previous votes in this poll
+  poll.options.forEach(opt => {
+    opt.votes = opt.votes.filter(v => v !== data.currentUser);
+  });
+
+  // Add vote (toggle: if already voted same, just remove)
+  const option = poll.options.find(o => o.id === optionId);
+  if (option && !option.votes.includes(data.currentUser)) {
+    option.votes.push(data.currentUser);
+  }
+
+  render();
+}
+
+function removePoll(id) {
+  if (!confirm('Supprimer ce sondage ?')) return;
+  data.polls = data.polls.filter(p => p.id !== id);
+  render();
+}
+
+// ============================================
+// CHAT
+// ============================================
+function renderChat() {
+  const messagesHtml = data.messages.length === 0
+    ? '<div class="empty-state"><div class="emoji">💬</div><p>Aucun message</p></div>'
+    : data.messages.map(msg => {
+      if (msg.system) {
+        return `<div style="text-align:center;font-size:13px;color:var(--gray-400);padding:4px 0">${msg.content}</div>`;
+      }
+      const isMine = msg.participantId === data.currentUser;
+      const name = getParticipantName(msg.participantId);
+      return `
+        <div class="message ${isMine ? 'mine' : ''}">
+          <div class="avatar avatar-sm" style="background:${getAvatarColor(name)}">${getInitials(name)}</div>
+          <div>
+            <div class="message-meta">${name} · ${formatTime(msg.timestamp)}</div>
+            <div class="message-bubble">${msg.content.replace(/</g,'&lt;')}</div>
+          </div>
+        </div>`;
+    }).join('');
+
+  return `
+    <div class="card">
+      <div class="card-header">💬 Chat</div>
+      <div class="card-body" style="padding:12px">
+        <div class="chat-container" id="chat-box">
+          ${messagesHtml}
+        </div>
+        <div class="chat-input">
+          <input type="text" id="chat-message" placeholder="Ton message..." maxlength="500" onkeydown="if(event.key==='Enter')sendMessage()">
+          <button class="btn btn-primary" onclick="sendMessage()">📤</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function sendMessage() {
+  const input = document.getElementById('chat-message');
+  const content = input.value.trim();
+  if (!content) return;
+
+  data.messages.push({
+    id: uid(),
+    participantId: data.currentUser,
+    content,
+    timestamp: Date.now(),
+    system: false
+  });
+
+  input.value = '';
+  render();
+
+  setTimeout(() => {
+    const c = document.getElementById('chat-box');
+    if (c) c.scrollTop = c.scrollHeight;
+  }, 50);
+}
+
+// ============================================
+// TODOS
+// ============================================
+function renderTodos() {
+  const done = data.todos.filter(t => t.done).length;
+  const confirmed = data.participants.filter(p => p.status !== 'declined');
+
+  const items = data.todos.length === 0
+    ? '<div class="empty-state"><div class="emoji">✅</div><p>Rien à faire pour le moment</p></div>'
+    : data.todos.map(t => {
+      const assigneeName = t.assignedTo ? getParticipantName(t.assignedTo) : '';
+      return `
+        <div class="todo-item">
+          <div class="todo-check ${t.done ? 'done' : ''}" onclick="toggleTodo('${t.id}')">${t.done ? '✓' : ''}</div>
+          <span class="todo-text ${t.done ? 'done' : ''}">${t.title}</span>
+          ${assigneeName ? `<span class="todo-assignee">${assigneeName}</span>` : ''}
+          <button class="delete-btn" onclick="removeTodo('${t.id}')">🗑️</button>
+        </div>`;
+    }).join('');
+
+  const assignOptions = confirmed.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        ✅ À faire
+        <span class="count">${done}/${data.todos.length}</span>
+      </div>
+      <div class="card-body">
+        ${items}
+        <button class="add-btn" onclick="toggleForm('add-todo-form')" style="margin-top:12px">+ Ajouter une tâche</button>
+        <div class="inline-form" id="add-todo-form">
+          <input type="text" id="todo-title" placeholder="Quoi faire..." maxlength="200" onkeydown="if(event.key==='Enter')addTodo()">
+          <select id="todo-assignee"><option value="">Assigner à...</option>${assignOptions}</select>
+          <button class="btn btn-primary btn-sm" onclick="addTodo()">Ajouter</button>
+          <button class="btn btn-secondary btn-sm" onclick="toggleForm('add-todo-form')">Annuler</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function addTodo() {
+  const title = document.getElementById('todo-title').value.trim();
+  const assignedTo = document.getElementById('todo-assignee').value || null;
+  if (!title) return;
+
+  data.todos.push({ id: uid(), title, assignedTo, done: false });
+  toast('Tâche ajoutée ! ✅');
+  render();
+}
+
+function toggleTodo(id) {
+  const t = data.todos.find(t => t.id === id);
+  if (t) { t.done = !t.done; render(); }
+}
+
+function removeTodo(id) {
+  data.todos = data.todos.filter(t => t.id !== id);
+  render();
+}
+
+// ============================================
+// TOGGLE FORM
+// ============================================
+function toggleForm(formId) {
+  const form = document.getElementById(formId);
+  form.classList.toggle('show');
+  if (form.classList.contains('show')) {
+    const firstInput = form.querySelector('input');
+    if (firstInput) setTimeout(() => firstInput.focus(), 100);
+  }
+}
+
+// ============================================
+// DANGER ZONE — Reset
+// ============================================
+function resetAll() {
+  if (!confirm('⚠️ Supprimer TOUTES les données du weekend ?')) return;
+  if (!confirm('Vraiment vraiment sûr ?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  data = getDefaultData();
+  activeTab = 'overview';
+  toast('Données supprimées');
+  render();
+}
+
+// ============================================
+// INIT
+// ============================================
+render();
+</script>
+</body>
+</html>
